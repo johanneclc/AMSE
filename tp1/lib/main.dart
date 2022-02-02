@@ -78,6 +78,8 @@ class _MyCandidatesListStatefulWidgetState extends State<MyCandidatesList> {
                         candidat.toggleLike();
                         if(candidat.isLiked)
                           favorites.add(candidat); 
+                        else
+                          favorites.remove(candidat);
                     });
                   },
                     icon : Icon(
@@ -200,6 +202,16 @@ final candidats = [
     description: "candidate aux présidentielles 2022"
   ),
   CandidatModel(
+      name: "Jean Lassalle",
+      imageUrl: "images/jean_lassalle.png",
+      description: "candidat aux présidentielles 2022"
+  ),
+  CandidatModel(
+      name: "Marine Le Pen",
+      imageUrl: "images/marine_lepen.jpg",
+      description: "candidat aux présidentielles 2022"
+  ),
+  CandidatModel(
       name: "Emmanuel Macron",
       imageUrl: "images/emmanuel_macron.jpg",
       description: "candidat aux présidentielles 2022"
@@ -207,6 +219,16 @@ final candidats = [
   CandidatModel(
       name: "Jean-Luc Mélenchon",
       imageUrl: "images/jeanLuc_melenchon.jpg",
+      description: "candidat aux présidentielles 2022"
+  ),
+  CandidatModel(
+      name: "Valerie Pecresse",
+      imageUrl: "images/valerie_pecresse.jpg",
+      description: "candidat aux présidentielles 2022"
+  ),
+  CandidatModel(
+      name: "Philippe Poutou",
+      imageUrl: "images/philippe_poutou.jpg",
       description: "candidat aux présidentielles 2022"
   ),
   CandidatModel(
