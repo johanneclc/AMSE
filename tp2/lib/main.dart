@@ -137,9 +137,40 @@ class Exercice2 extends StatefulWidget {
 }
 
 class _Exercice2State extends State<Exercice2> {
+  double x = 0; 
+  double y = 0; 
+
+  Widget build_slider_x() {
+    return Slider(
+      value: x,
+      max: 100,
+      divisions: 5,
+      label: x.round().toString(),
+      onChanged: (double value) {
+        setState(() {
+          x = value;
+        });
+      },
+    );
+  }
+
+  Widget build_slider_y() {
+    return Slider(
+      value: y,
+      max: 100,
+      divisions: 5,
+      label: y.round().toString(),
+      onChanged: (double value) {
+        setState(() {
+          y = value;
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
@@ -149,10 +180,13 @@ class _Exercice2State extends State<Exercice2> {
             ListView(
                 padding: const EdgeInsets.all(8),
                 children: <Widget>[
-                  Container(
+                  Transform(
+                    transform: Matrix4.identity()..rotateX(x)..rotateY(y),
+                    child : Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(color: Colors.white),
                       child: Image.network('https://picsum.photos/512/1024'),
+                    ),
                   ),
                   Row(
                     children : [
@@ -160,10 +194,20 @@ class _Exercice2State extends State<Exercice2> {
                         child: Text("orientation x :"), 
                       ),
                       Expanded(
-                        child: SliderWidget(),
+                        child: build_slider_x(),
                       )                      
                     ]
-                  )
+                  ),
+                  Row(
+                    children : [
+                      Expanded(
+                        child: Text("orientation y :"), 
+                      ),
+                      Expanded(
+                        child: build_slider_y(),
+                      )                      
+                    ]
+                  ),
                 ],
               )
                                
