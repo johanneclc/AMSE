@@ -16,6 +16,96 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class MyFavoritesWidget extends StatelessWidget{
+
+   Widget build_candidate(CandidatModel candidat) {
+    return  Container(
+          height: 90,
+          child: Row(
+            children: [
+              Expanded(
+                  child: Image.network(candidat.imageUrl),
+              ),
+              Expanded(
+                child: Text(candidat.name),
+              ),
+            ],
+          )
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  
+          ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: favorites.length,
+            itemBuilder: (BuildContext context, int index) {
+              return build_candidate(favorites[index]);
+            }
+          );
+  }
+
+}
+
+class MyCandidatesList extends StatefulWidget {
+  const MyCandidatesList({Key? key}) : super(key: key);
+
+  @override
+  State<MyCandidatesList> createState() => _MyCandidatesListStatefulWidgetState();
+
+}
+
+
+
+class _MyCandidatesListStatefulWidgetState extends State<MyCandidatesList> {
+
+   Widget build_candidate(CandidatModel candidat) {
+    return  Container(
+          height: 90,
+          child: Row(
+            children: [
+              Expanded(
+                  child: Image.network(candidat.imageUrl),
+              ),
+              Expanded(
+                child: Text(candidat.name),
+              ),
+              Expanded(
+                child: IconButton(
+                  onPressed: () {
+                      setState(() {
+                        candidat.toggleLike();
+                        if(candidat.isLiked)
+                          favorites.add(candidat); 
+                    });
+                  },
+                    icon : Icon(
+                      candidat.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: candidat.isLiked ? Colors.red : null,
+                      semanticLabel: candidat.isLiked ? 'Remove from saved' : 'Save',
+                    ),
+                ), 
+              ),
+            ],
+          )
+    );
+  }
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return  
+          ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: candidats.length,
+            itemBuilder: (BuildContext context, int index) {
+              return build_candidate(candidats[index]);
+            }
+          );
+  }
+}
+
 class MyStatefulWidget extends StatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
 
@@ -26,59 +116,12 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
+  
   final tab = [
     const Center(child: Text('Bonjour !  \nIci, découvre tous les candidats \naux élections présidentielles !', 
                               style: optionStyle)),
-    ListView.separated(
-      padding: const EdgeInsets.all(8),
-      itemCount: candidats.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          height: 90,
-          child: Row(
-            children: [
-              Expanded(
-                  child: Image.network(candidats[index].imageUrl),
-              ),
-              Expanded(
-                child: Text(candidats[index].name),
-              ),
-              Expanded(
-                child: IconButton(
-                  onPressed: () {
-                      setState(() {
-                        candidats[index].isLiked ? () => candidats[index].unLike() : () => candidats[index].like();
-                    });
-                  },
-                    icon : Icon(
-                      candidats[index].isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: candidats[index].isLiked ? Colors.red : null,
-                      semanticLabel: candidats[index].isLiked ? 'Remove from saved' : 'Save',
-                    ),
-                  
-                ), 
-                // onTap: () { 
-                //   setState(() {
-                //     if (candidats[index].isLiked) {
-                //       candidats[index].isLiked = false; 
-                //     } else { 
-                //       candidats[index].isLiked = true; 
-                //     } 
-                //   });
-                // }
-              ),
-            ],
-          )
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-    ),
-
-
-    const Center(child: Text('bonjour', style: optionStyle)),
-
-
+    MyCandidatesList(),
+    MyFavoritesWidget(),
     const Center(child: Text('Développé par : Johanne Calcoen\nDate de derniere version: 31/01/2022')),
   ];
 
@@ -138,7 +181,17 @@ class CandidatModel{
   void unLike(){
     this.isLiked = false; 
   }
+
+  void toggleLike() {
+    this.isLiked = !this.isLiked;
+  }
 }
+
+// class CandidatWidget{
+//   Container candidatWidget; 
+
+//   CandidatWidget(this.candidatWidget); 
+// }
 
 final candidats = [
   CandidatModel(
@@ -163,3 +216,5 @@ final candidats = [
   ),
 
 ];
+List<CandidatModel> favorites = []; 
+
