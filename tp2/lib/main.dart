@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 const double pi = 3.1415926535897932;
 
@@ -410,7 +411,7 @@ class _GridViewWidgetState extends State<GridViewWidget> {
 
    @override
   Widget build(BuildContext context) {
-    double coef = 2/size;
+    double coef = 2/size.round();
     List<Widget> listWidgets = []; 
     for (int i=0; i<size; i++){
           for (int j=0; j<size; j++){
@@ -418,7 +419,8 @@ class _GridViewWidgetState extends State<GridViewWidget> {
                 new Container(
                   padding: const EdgeInsets.all(8),
                   child: InkWell(
-                          child: (new Tile(imageURL: 'https://picsum.photos/512', alignment: Alignment(-1+j*coef, -1+i*coef))).croppedImageTile(),
+                          child: (new Tile(imageURL: 'https://picsum.photos/512', 
+                          alignment: Alignment(-1+j*coef, -1+i*coef))).croppedImageTile(),
                           onTap: () {
                             print("tapped on tile");
                           },
@@ -450,6 +452,235 @@ class _GridViewWidgetState extends State<GridViewWidget> {
   }
 }
 
+// Exercice 6 version couleur
+
+// class MyApp6 extends StatelessWidget {
+//   const MyApp6({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'TP2',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: const Exercice6(title: 'TP2'),
+//     );
+//   }
+// }
+
+// class Exercice6 extends StatefulWidget {
+//   const Exercice6({Key? key, required this.title}) : super(key: key);
+
+//   final String title;
+
+//   @override
+//   State<Exercice6> createState() => _Exercice6State();
+// }
+
+// class _Exercice6State extends State<Exercice6> {  
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       drawer: NavDrawer(),
+//       appBar: AppBar(
+//         title: Text(widget.title),
+//       ),
+//       body:  PositionedTiles(),
+//     );
+//   }
+// }
+
+// // ==============
+// // Models
+// // ==============
+
+// math.Random random = new math.Random();
+
+// class TileFinal {
+//   Color? color;
+
+//   TileFinal(this.color);
+//   TileFinal.randomColor() {
+//     this.color = Color.fromARGB(
+//         255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+//   }
+// }
+
+// // ==============
+// // Widgets
+// // ==============
+
+// class TileFinalWidget extends StatelessWidget {
+//   final TileFinal tile;
+
+//   TileFinalWidget(this.tile);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return this.coloredBox();
+//   }
+
+//   Widget coloredBox() {
+//     return Container(
+//         color: tile.color,
+//         child: Padding(
+//           padding: EdgeInsets.all(70.0),
+//         ));
+//   }
+// }
+
+// class PositionedTiles extends StatefulWidget {
+//   @override
+//   State<StatefulWidget> createState() => PositionedTilesState();
+// }
+
+// class PositionedTilesState extends State<PositionedTiles> {
+//   List<Widget> tiles =
+//       List<Widget>.generate(2, (index) => TileFinalWidget(TileFinal.randomColor()));
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Moving Tiles'),
+//         centerTitle: true,
+//       ),
+//       body: Row(children: tiles),
+//       floatingActionButton: FloatingActionButton(
+//           child: Icon(Icons.sentiment_very_satisfied), onPressed: swapTiles),
+//     );
+//   }
+
+//   swapTiles() {
+//     setState(() {
+//       tiles.insert(1, tiles.removeAt(0));
+//     });
+//   }
+// }
+
+// Exercice 6 version image
+
+class MyApp6 extends StatelessWidget {
+  const MyApp6({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TP2',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Exercice6(title: 'TP2'),
+    );
+  }
+}
+
+class Exercice6 extends StatefulWidget {
+  const Exercice6({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<Exercice6> createState() => _Exercice6State();
+}
+
+class _Exercice6State extends State<Exercice6> {  
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: NavDrawer(),
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body:  PositionedTiles(),
+    );
+  }
+}
+
+class PositionedTiles extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => PositionedTilesState();
+}
+
+class PositionedTilesState extends State<PositionedTiles> {
+  List<Widget> tiles =
+      List<Widget>.generate(2, (index) => (new Tile(imageURL: 'https://picsum.photos/512', 
+                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()))).croppedImageTile());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Moving Tiles'),
+        centerTitle: true,
+      ),
+      body: Row(children: tiles),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.sentiment_very_satisfied), onPressed: swapTiles),
+    );
+  }
+
+  swapTiles() {
+    setState(() {
+      tiles.insert(1, tiles.removeAt(0));
+    });
+  }
+}
+
+
+// Exercice 6b
+
+class MyApp6b extends StatelessWidget {
+  const MyApp6b({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TP2',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Exercice6b(title: 'TP2'),
+    );
+  }
+}
+
+class Exercice6b extends StatefulWidget {
+  const Exercice6b({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<Exercice6b> createState() => _Exercice6bState();
+}
+
+class _Exercice6bState extends State<Exercice6b> {  
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: NavDrawer(),
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body:  PositionedTiles(),
+    );
+  }
+}
+
+List<Widget> listRandomTiles(double size, int nbrMove){
+  List<Widget> tiles =
+      List<Widget>.generate(size.toInt(), (index) => (new Tile(imageURL: 'https://picsum.photos/512', 
+                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()))).croppedImageTile());
+  
+  tiles.replaceRange(2,3, [10]);
+  tiles.shuffle(); 
+
+  return tiles;
+}
 
 // Menu 
 class NavDrawer extends StatelessWidget {
@@ -487,6 +718,14 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             title: Text('Exercice 5 : Génération du plateau de tuiles'),
             onTap: () => {Navigator.push(context, new MaterialPageRoute(builder: (context) => new MyApp5()))},
+          ),
+          ListTile(
+            title: Text("Exercice 6a : Animation d'une tuile"),
+            onTap: () => {Navigator.push(context, new MaterialPageRoute(builder: (context) => new MyApp6()))},
+          ),
+          ListTile(
+            title: Text("Exercice 6b : Animation d'une tuile"),
+            onTap: () => {Navigator.push(context, new MaterialPageRoute(builder: (context) => new MyApp6b()))},
           ),
           ListTile(
             title: Text('Retour'),
