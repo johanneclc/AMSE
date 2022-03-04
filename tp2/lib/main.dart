@@ -412,7 +412,6 @@ class _GridViewWidgetState extends State<GridViewWidget> {
 
    @override
   Widget build(BuildContext context) {
-    double coef = 2/size.round();
     List<Widget> listWidgets = []; 
     for (int i=0; i<size; i++){
           for (int j=0; j<size; j++){
@@ -421,7 +420,7 @@ class _GridViewWidgetState extends State<GridViewWidget> {
                   padding: const EdgeInsets.all(8),
                   child: InkWell(
                           child: (new Tile(imageURL: 'https://picsum.photos/512', 
-                          alignment: Alignment(-1+j*coef, -1+i*coef), 
+                          alignment: Alignment(-1+2*j/(size-1), -1+2*i/(size-1)), 
                           size: size)).croppedImageTile(),
                           onTap: () {
                             print("tapped on tile");
@@ -610,7 +609,7 @@ class PositionedTiles extends StatefulWidget {
 class PositionedTilesState extends State<PositionedTiles> {
   List<Widget> tiles =
       List<Widget>.generate(2, (index) => (new Tile(imageURL: 'https://picsum.photos/512', 
-                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()), size: 3).croppedImageTile()));
+                          alignment: Alignment(-1+2*index.toDouble()/2,-1+2*index.toDouble()/2), size: 3).croppedImageTile()));
 
   @override
   Widget build(BuildContext context) {
@@ -671,28 +670,7 @@ class _Exercice6bState extends State<Exercice6b> {
       body:  FinalGridViewWidget(),
     );
   }
-}
-
-List<Widget> listRandomTiles(double size, int nbrMove){
-  double coef = 2/size; 
-  List<Widget> listWidgets = []; 
-  for (int i=0; i<size; i++){
-        for (int j=0; j<size; j++){
-            listWidgets.add(
-              (new Tile(imageURL: 'https://picsum.photos/512', 
-                        alignment: Alignment(-1+j*coef, -1+i*coef), 
-                        size: size)).croppedImageTile()
-            );
-        }
-      }; 
-  
-  List<Widget> tiles =
-      List<Widget>.generate(size.toInt(), (index) => (new Tile(imageURL: 'https://picsum.photos/512', 
-                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()), size: size)).croppedImageTile());
-  
-  return tiles;
-}
-
+}  
 
 class FinalGridViewWidget extends StatefulWidget {
   @override
@@ -701,6 +679,8 @@ class FinalGridViewWidget extends StatefulWidget {
 
 class _FinalGridViewWidgetState extends State<FinalGridViewWidget> {
   double size = 3 ; 
+  late List<Widget> listWidgets = listRandomTiles(size, 1000); 
+  int EmptyTile = 0;
 
   Widget build_slider() {
     return Slider(
@@ -717,32 +697,99 @@ class _FinalGridViewWidgetState extends State<FinalGridViewWidget> {
     );
   }
 
+  List<Widget> listRandomTiles(double size, int nbrMove){
+    List<Widget> listWidgets = []; 
+    for (int i=0; i<size; i++){
+          for (int j=0; j<size; j++){
+              listWidgets.add(
+                (new Tile(imageURL: 'https://picsum.photos/512', 
+                          alignment: Alignment(-1+2*j/(size.toInt()-1), -1+2*i/(size.toInt()-1)), 
+                          size: size)).croppedImageTile()
+              );
+          }
+        }; 
+
+    listWidgets[0] = Container(
+        alignment: Alignment.center,
+        color: Colors.white,
+    );
+
+    for (int i=0; i<nbrMove*size*size; i++) {
+      int tile = math.Random().nextInt((size*size).toInt()-1);
+       SwipTiles(tile,listWidgets);
+    }
+    return listWidgets;
+}
+
+  bool areNextTo(int tile1, int tile2, double size) {
+    int sizeRound = size.round();
+    if (tile2==tile1+1 && tile2%sizeRound!=0) {
+      return true;
+    }
+    else if (tile2==tile1-1 && tile1%sizeRound!=0) {
+      return true;
+    }
+    else if (tile2==tile1+sizeRound && tile2>sizeRound-1) {
+      return true;
+    }
+    else if (tile2==tile1-sizeRound && tile1>sizeRound-1) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  void SwipTiles(int tile, List<Widget> listWidgets){
+     if (areNextTo(EmptyTile, tile, size)) {
+        listWidgets[EmptyTile] = listWidgets[tile];
+        listWidgets[tile] = Container(
+          alignment: Alignment.center,
+          color: Colors.white,
+        );
+        EmptyTile = tile;
+      }
+
+    }
+
 
    @override
   Widget build(BuildContext context) {
-    double coef = 2/size.round();
-    List<Widget> listWidgets = listRandomTiles(size, 10); 
-
 
     return   Row(
-                    children : [
-                      Expanded(
-                        child: new GridView.count(
-                                  primary: false,
-                                  padding: const EdgeInsets.all(20),
-                                  crossAxisSpacing: 1,
-                                  mainAxisSpacing: 1,
-                                  crossAxisCount: size.toInt(),
-                                  children: listWidgets,
-                                ), 
-                      ),
-                      Expanded(
-                        child: build_slider(),
-                      )                      
-                    ]
-                  ); 
+                children : [
+                  Expanded(
+                    child: new GridView.count(
+                              primary: false,
+                              padding: const EdgeInsets.all(20),
+                              crossAxisSpacing: 1,
+                              mainAxisSpacing: 1,
+                              crossAxisCount: size.toInt(),
+                              children: [ for(var k = 0 ; k<(size*size).toInt();k++) 
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  SwipTiles(k,listWidgets);
+                                                });
+                                                print('1 was clicked');
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.all(8),
+                                                child: listWidgets[k],
+                                              ),
+                                            ),
+                                    ],
+                                           
+                            ) , 
+                  ),
+                  // Expanded(
+                  //   child: build_slider(),
+                  // )                      
+                ]
+              ); 
       
   }
+
 }
 
 // Menu 
