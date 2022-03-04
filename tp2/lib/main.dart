@@ -287,8 +287,9 @@ class _Exercice4State extends State<Exercice4> {
 class Tile {
   String imageURL;
   Alignment alignment;
+  double size;
 
-  Tile({required this.imageURL,required this.alignment});
+  Tile({required this.imageURL,required this.alignment, required this.size});
 
   Widget croppedImageTile() {
     return FittedBox(
@@ -297,8 +298,8 @@ class Tile {
         child: Container(
           child: Align(
             alignment: this.alignment,
-            widthFactor: 0.3,
-            heightFactor: 0.3,
+            widthFactor: 1/size,
+            heightFactor: 1/size,
             child: Image.network(this.imageURL),
           ),
         ),
@@ -308,7 +309,7 @@ class Tile {
 }
 
 Tile tile = new Tile(
-    imageURL: 'https://picsum.photos/512', alignment: Alignment(0, 0));
+    imageURL: 'https://picsum.photos/512', alignment: Alignment(0.0, -0.5), size: 3);
 
 
 class DisplayTileWidget extends StatelessWidget {
@@ -420,7 +421,8 @@ class _GridViewWidgetState extends State<GridViewWidget> {
                   padding: const EdgeInsets.all(8),
                   child: InkWell(
                           child: (new Tile(imageURL: 'https://picsum.photos/512', 
-                          alignment: Alignment(-1+j*coef, -1+i*coef))).croppedImageTile(),
+                          alignment: Alignment(-1+j*coef, -1+i*coef), 
+                          size: size)).croppedImageTile(),
                           onTap: () {
                             print("tapped on tile");
                           },
@@ -431,7 +433,7 @@ class _GridViewWidgetState extends State<GridViewWidget> {
         }; 
 
 
-    return   Column(
+    return   Row(
                     children : [
                       Expanded(
                         child: new GridView.count(
@@ -608,7 +610,7 @@ class PositionedTiles extends StatefulWidget {
 class PositionedTilesState extends State<PositionedTiles> {
   List<Widget> tiles =
       List<Widget>.generate(2, (index) => (new Tile(imageURL: 'https://picsum.photos/512', 
-                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()))).croppedImageTile());
+                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()), size: 3).croppedImageTile()));
 
   @override
   Widget build(BuildContext context) {
@@ -666,20 +668,81 @@ class _Exercice6bState extends State<Exercice6b> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body:  PositionedTiles(),
+      body:  FinalGridViewWidget(),
     );
   }
 }
 
 List<Widget> listRandomTiles(double size, int nbrMove){
+  double coef = 2/size; 
+  List<Widget> listWidgets = []; 
+  for (int i=0; i<size; i++){
+        for (int j=0; j<size; j++){
+            listWidgets.add(
+              (new Tile(imageURL: 'https://picsum.photos/512', 
+                        alignment: Alignment(-1+j*coef, -1+i*coef), 
+                        size: size)).croppedImageTile()
+            );
+        }
+      }; 
+  
   List<Widget> tiles =
       List<Widget>.generate(size.toInt(), (index) => (new Tile(imageURL: 'https://picsum.photos/512', 
-                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()))).croppedImageTile());
+                          alignment: Alignment(-1+index.toDouble(), -1+index.toDouble()), size: size)).croppedImageTile());
   
-  tiles.replaceRange(2,3, [10]);
-  tiles.shuffle(); 
-
   return tiles;
+}
+
+
+class FinalGridViewWidget extends StatefulWidget {
+  @override
+  _FinalGridViewWidgetState createState() => _FinalGridViewWidgetState();
+}
+
+class _FinalGridViewWidgetState extends State<FinalGridViewWidget> {
+  double size = 3 ; 
+
+  Widget build_slider() {
+    return Slider(
+      value: size,
+      min: 2, 
+      max: 10,
+      divisions: 8,
+      label: size.round().toString(),
+      onChanged: (double value) {
+        setState(() {
+          size = value;
+        });
+      },
+    );
+  }
+
+
+   @override
+  Widget build(BuildContext context) {
+    double coef = 2/size.round();
+    List<Widget> listWidgets = listRandomTiles(size, 10); 
+
+
+    return   Row(
+                    children : [
+                      Expanded(
+                        child: new GridView.count(
+                                  primary: false,
+                                  padding: const EdgeInsets.all(20),
+                                  crossAxisSpacing: 1,
+                                  mainAxisSpacing: 1,
+                                  crossAxisCount: size.toInt(),
+                                  children: listWidgets,
+                                ), 
+                      ),
+                      Expanded(
+                        child: build_slider(),
+                      )                      
+                    ]
+                  ); 
+      
+  }
 }
 
 // Menu 
